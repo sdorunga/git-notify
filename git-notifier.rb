@@ -1,5 +1,6 @@
 require 'octokit'
 require 'sinatra'
+require 'slack-notifier'
 require 'oj'
 require 'pry'
 
@@ -451,11 +452,35 @@ EOS
     end
   end
 
+  module Notifiers
+    class Slack
+
+      attr_reader :user
+
+      def initialize(user:)
+        @user = user
+        @slack = ::Slack::Notifier.new(webhook_url)
+        @slack.username = "git-notifier"
+        @slack.channel = "@sdorunga"
+      end
+
+
+      def notify
+        @slack.ping "Hello World"
+      end
+
+      def webhook_url
+        "https://hooks.slack.com/services/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"
+      end
+    end
+  end
+
   request_id = Oj.load(string)["repository"]["id"]
   repository = Repository.new(id: request_id)
   top_contributors = repository.contributors.sort_by(&:contributions).
                                              reverse.
                                              take(5)
+  top_contributors.each { |contributor| Notifier::Slack.new(user: contributor.user_name).notify }
   binding.pry
   #repository = Octokit.repositories.detect { |repo| repo.id == request["repository"]["id"] }
   #contributors = repository.rels[:contributors].get.data
