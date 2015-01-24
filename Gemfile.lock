@@ -9,6 +9,7 @@ GEM
     multipart-post (2.0.0)
     octokit (3.7.0)
       sawyer (~> 0.6.0, >= 0.5.3)
+    oj (2.11.4)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -31,5 +32,6 @@ PLATFORMS
 
 DEPENDENCIES
   octokit
+  oj
   pry
   sinatra
