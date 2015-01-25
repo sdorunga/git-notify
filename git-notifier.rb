@@ -19,7 +19,7 @@ end
 
 Mongoid.load!("mongoid.yml", :development)
 
-class MyApp < Sinatra::Base
+class MyApp < Sinatra::Application
   string = <<-EOS
 {
   "action": "opened",
@@ -455,6 +455,14 @@ EOS
   end
 
   post "/repository-subscriptions/:repository_id/contributors/:contributor_id" do
+    contributor_preference = ContributorPreferences.find_by(git_id: params[:contributor_id])
+    contributor_preference.followed_repos << params[:repository_id]
+    contributor_preference.save!
+    redirect "/repositories/#{params[:repository_id]}"
+  end
+
+  delete "/repository-subscriptions/:repository_id/contributors/:contributor_id" do
+    binding.pry
     contributor_preference = ContributorPreferences.find_by(git_id: params[:contributor_id])
     contributor_preference.followed_repos << params[:repository_id]
     contributor_preference.save!
