@@ -1,0 +1,42 @@
+doctype html
+html
+  head
+    title Git Notify
+    meta name="keywords" content="template language"
+    meta name="author" content="Author"
+
+  body
+    h1 User Preferences
+
+    #content
+      p This page lets you select the options for all the users
+
+      - unless preferences.empty?
+        table
+          tr
+            th Github User ID
+            th Slack Name
+            th Notify
+          - for preference in preferences do
+            tr
+              form action="/hi/#{preference.git_id}" method="post"
+                td.id 
+                  = preference.git_id
+                td.id 
+                    input type="text" name="name" value=preference.name
+                td.id 
+                  - if preference.notify
+                    input type="radio" name="notify" value="yes" checked='checked' Yes
+                    input type="radio" name="notify" value="no" No
+                  - else 
+                    input type="radio" name="notify" value="yes" Yes
+                    input type="radio" name="notify" value="no" checked='checked' No
+                td.id 
+                    input type="submit"
+      - else
+        p
+         | No items found.  Please add some inventory.
+           Thank you!
+
+    div id="footer"
+    | Copyright  2015 S Dorunga

@@ -1,15 +1,19 @@
 require 'octokit'
 require 'sinatra'
+require 'mongoid'
 require 'slack-notifier'
 require 'oj'
 require 'pry'
+require 'slim'
 
 Octokit.configure do |c|
   c.login = 'sdorunga-sb'
   c.password = 'Student3230'
 end
 
-class MyApp < Sinatra::Application
+Mongoid.load!("mongoid.yml", :development)
+
+class MyApp < Sinatra::Base
   string = <<-EOS
 {
   "action": "opened",
@@ -450,6 +454,20 @@ EOS
       @contributions = payload[:contributions]
 
     end
+
+    def preferences
+      {
+        name:           @preference_storage.name,
+        notify:         @preference_storage.notify,
+        followed_repos: @preference_storage.name
+      }
+    end
+
+    private
+
+    def preference_storage
+      @preference_storage ||= ContributorPreferences.where(git_id: user_id)
+    end
   end
 
   module Notifiers
@@ -475,16 +493,35 @@ EOS
     end
   end
 
+  class ContributorPreferences
+    include Mongoid::Document
+
+    field :git_id, type: String
+    field :name, type: String
+    field :notify, type: Boolean
+    field :followed_repos, type: Array
+
+    def whitelisted_fields
+      fields.keys.reject { |key| key == "_id" }
+    end
+  end
+
   request_id = Oj.load(string)["repository"]["id"]
   repository = Repository.new(id: request_id)
   top_contributors = repository.contributors.sort_by(&:contributions).
                                              reverse.
                                              take(5)
-  top_contributors.each { |contributor| Notifier::Slack.new(user: contributor.user_name).notify }
-  binding.pry
+  top_contributors.each { |contributor| Notifiers::Slack.new(user: contributor.user_name).notify }
   #repository = Octokit.repositories.detect { |repo| repo.id == request["repository"]["id"] }
   #contributors = repository.rels[:contributors].get.data
   get '/hi' do
-    erb Octokit.user.name
+    contributor_preferences = ContributorPreferences.all
+    slim :index, locals: { preferences: contributor_preferences.to_a }
+  end
+  post '/hi/:git_id' do
+    contributor_preferences = ContributorPreferences.find_by(git_id: params[:git_id])
+    whitelisted_params = contributor_preferences.whitelisted_fields.reduce({}) { |hash, field| hash[field.to_s] = params[field]; hash }
+    contributor_preferences.update_attributes!(whitelisted_params)
+    redirect '/hi'
   end
 end

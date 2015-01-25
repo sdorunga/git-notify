@@ -1,0 +1,7 @@
+development:
+  sessions:
+    default:
+      database: git-notifier
+      hosts:
+        - localhost:27017
+
