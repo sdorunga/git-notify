@@ -5,6 +5,10 @@ require 'slack-notifier'
 require 'oj'
 require 'pry'
 require 'slim'
+require_relative 'git/pull_request'
+require_relative 'git/contributor'
+require_relative 'git/repository'
+require_relative 'notifiers/slack'
 
 Octokit.configure do |c|
   c.login = 'sdorunga-sb'
@@ -428,68 +432,16 @@ class MyApp < Sinatra::Base
   }
 }
 EOS
-  class Repository
-    def initialize(id:)
-      @id = id
-      @repository = Octokit.repositories.detect { |repo| repo.id == @id }
-    end
 
-    def contributors
-      contributor_data.map { |contributor| Contributor.new(contributor) }
-    end
+  class RepositoryPreferences
+    include Mongoid::Document
 
-    private
+    field :name, type: String
+    field :active, type: Boolean
+    field :subscribers, type: Array
 
-    def contributor_data
-      @contributor_data ||= @repository.rels[:contributors].get.data
-    end
-  end
-
-  class Contributor
-    attr_reader :user_id, :user_name, :contributions
-
-    def initialize(payload)
-      @user_id       = payload[:id]
-      @user_name     = payload[:name]
-      @contributions = payload[:contributions]
-
-    end
-
-    def preferences
-      {
-        name:           @preference_storage.name,
-        notify:         @preference_storage.notify,
-        followed_repos: @preference_storage.name
-      }
-    end
-
-    private
-
-    def preference_storage
-      @preference_storage ||= ContributorPreferences.where(git_id: user_id)
-    end
-  end
-
-  module Notifiers
-    class Slack
-
-      attr_reader :user
-
-      def initialize(user:)
-        @user = user
-        @slack = ::Slack::Notifier.new(webhook_url)
-        @slack.username = "git-notifier"
-        @slack.channel = "@sdorunga"
-      end
-
-
-      def notify
-        @slack.ping "Hello World"
-      end
-
-      def webhook_url
-        "https://hooks.slack.com/services/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"
-      end
+    def whitelisted_fields
+      fields.keys.reject { |key| key == "_id" }
     end
   end
 
@@ -506,19 +458,25 @@ EOS
     end
   end
 
-  request_id = Oj.load(string)["repository"]["id"]
-  repository = Repository.new(id: request_id)
-  top_contributors = repository.contributors.sort_by(&:contributions).
-                                             reverse.
-                                             take(5)
-  top_contributors.each { |contributor| Notifiers::Slack.new(user: contributor.user_name).notify }
-  #repository = Octokit.repositories.detect { |repo| repo.id == request["repository"]["id"] }
-  #contributors = repository.rels[:contributors].get.data
-  get '/hi' do
+  post '/webhooks' do
+    request = Oj.load(string, symbol_keys: true)
+    repository_id = request[:repository][:id]
+    repository = Repository.new(id: repository_id)
+    pr = Git::PullRequest.new(request[:pull_request])
+    repository.top_contributors.each { |contributor| Notifiers::Slack.new(username: contributor.user_name, pr: pr).notify }
+  end
+
+  get '/repositories' do
     contributor_preferences = ContributorPreferences.all
     slim :index, locals: { preferences: contributor_preferences.to_a }
   end
-  post '/hi/:git_id' do
+
+  get '/contributor-preferences' do
+    contributor_preferences = ContributorPreferences.all
+    slim :index, locals: { preferences: contributor_preferences.to_a }
+  end
+
+  post '/contributor-preferences/:git_id' do
     contributor_preferences = ContributorPreferences.find_by(git_id: params[:git_id])
     whitelisted_params = contributor_preferences.whitelisted_fields.reduce({}) { |hash, field| hash[field.to_s] = params[field]; hash }
     contributor_preferences.update_attributes!(whitelisted_params)

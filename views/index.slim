@@ -19,7 +19,7 @@ html
             th Notify
           - for preference in preferences do
             tr
-              form action="/hi/#{preference.git_id}" method="post"
+              form action="/contributor-preferences/#{preference.git_id}" method="post"
                 td.id 
                   = preference.git_id
                 td.id 
