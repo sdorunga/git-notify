@@ -1,7 +1,10 @@
 class Repository
+  attr_reader :id
   def initialize(id:)
     @id = id
     @repository = Octokit.repositories.detect { |repo| repo.id == @id }
+    @repository_preferences = RepositoryPreferences.find_or_create_by(git_id: id)
+    @repository_preferences.update_attributes(name: @repository[:name])
   end
 
   def contributors

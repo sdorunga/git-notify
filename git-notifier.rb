@@ -9,6 +9,8 @@ require_relative 'git/pull_request'
 require_relative 'git/contributor'
 require_relative 'git/repository'
 require_relative 'notifiers/slack'
+require_relative 'repository_preferences'
+require_relative 'contributor_preferences'
 
 Octokit.configure do |c|
   c.login = 'sdorunga-sb'
@@ -433,31 +435,6 @@ class MyApp < Sinatra::Base
 }
 EOS
 
-  class RepositoryPreferences
-    include Mongoid::Document
-
-    field :name, type: String
-    field :active, type: Boolean
-    field :subscribers, type: Array
-
-    def whitelisted_fields
-      fields.keys.reject { |key| key == "_id" }
-    end
-  end
-
-  class ContributorPreferences
-    include Mongoid::Document
-
-    field :git_id, type: String
-    field :name, type: String
-    field :notify, type: Boolean
-    field :followed_repos, type: Array
-
-    def whitelisted_fields
-      fields.keys.reject { |key| key == "_id" }
-    end
-  end
-
   post '/webhooks' do
     request = Oj.load(string, symbol_keys: true)
     repository_id = request[:repository][:id]
@@ -468,7 +445,20 @@ EOS
 
   get '/repositories' do
     contributor_preferences = ContributorPreferences.all
-    slim :index, locals: { preferences: contributor_preferences.to_a }
+    repositories = RepositoryPreferences.all
+    slim :repositories, locals: { preferences: contributor_preferences.to_a, repositories: repositories.to_a }
+  end
+
+  get '/repositories/:repository_id' do
+    repository = Repository.new(id: params[:repository_id].to_i)
+    slim :repository, locals: { repository: repository, contributors: repository.contributors }
+  end
+
+  post "/repository-subscriptions/:repository_id/contributors/:contributor_id" do
+    contributor_preference = ContributorPreferences.find_by(git_id: params[:contributor_id])
+    contributor_preference.followed_repos << params[:repository_id]
+    contributor_preference.save!
+    redirect "/repositories/#{params[:repository_id]}"
   end
 
   get '/contributor-preferences' do

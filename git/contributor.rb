@@ -9,16 +9,16 @@ class Contributor
 
   def preferences
     {
-      name:           @preference_storage.name,
-      notify:         @preference_storage.notify,
-      followed_repos: @preference_storage.name
+      name:           preference_storage.name,
+      notify:         preference_storage.notify,
+      followed_repos: preference_storage.followed_repos
     }
   end
 
   private
 
   def preference_storage
-    @preference_storage ||= ContributorPreferences.where(git_id: user_id)
+    @preference_storage ||= ContributorPreferences.find_or_create_by(git_id: user_id)
   end
 end
 

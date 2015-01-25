@@ -1,0 +1,36 @@
+doctype html
+html
+  head
+    title Git Notify
+    meta name="keywords" content="template language"
+    meta name="author" content="Author"
+
+  body
+    h1 User Repositories
+
+    #content
+      p This page lets you select the options for all the repositories
+
+      - if repository
+        table
+          tr
+            th Github User ID
+            th User name
+            th Active
+          - for contributor in contributors do
+            tr
+              td.id 
+                a href="/repositories/#{contributor.user_id}"= contributor.user_id
+              td.id 
+                  input type="text" name="name" value=contributor.user_name
+              td.id = contributor.preferences[:followed_repos]
+              td.id 
+                form action="/repository-subscriptions/#{repository.id}/contributors/#{contributor.user_id}" method="post"
+                  input type="submit"
+      - else
+        p
+         | No items found.  Please add some inventory.
+           Thank you!
+
+    div id="footer"
+    | Copyright  2015 S Dorunga
