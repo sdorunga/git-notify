@@ -12,6 +12,10 @@ class Contributor
     preference_storage.update_attributes({ name: @user_name })
   end
 
+  def notify?
+    preferences[:notify]
+  end
+
   def preferences
     {
       name:           preference_storage.name,

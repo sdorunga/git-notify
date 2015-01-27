@@ -8,18 +8,23 @@ class Repository
     @repository_preferences.update_attributes(name: @repository[:name])
   end
 
-  def contributors
-    contributor_data.map { |contributor| Contributor.new(contributor) }
+  def notifiable_contributors
+    contributor_data.map { |contributor| Contributor.new(contributor) }.select(:notify?)
   end
 
   def top_contributors
-    contributors.sort_by(&:contributions).
+    return [] unless notify?
+    notifiable_contributors.sort_by(&:contributions).
                  reverse.
                  take(contributors_pool).
                  sample(contributors_to_invoke)
   end
 
   private
+
+  def notify?
+    @repository_preferences.notify?
+  end
 
   def contributor_data
     @contributor_data ||= @repository.rels[:contributors].get.data
