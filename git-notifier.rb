@@ -443,7 +443,9 @@ EOS
     repository_id = request[:repository][:id]
     repository = Repository.new(id: repository_id)
     pr = Git::PullRequest.new(request[:pull_request])
-    repository.top_contributors.each { |contributor| Notifiers::Slack.new(username: contributor.user_name, pr: pr).notify }
+    top_contributors = repository.top_contributors
+    review_team = (top_contributors + pr.mentioned_users).uniq {|contributor| contributor.preferences[:name] }
+    review_team.each { |contributor| Notifiers::Slack.new(username: contributor.user_name, pr: pr).notify }
   end
 
   get '/repositories' do
@@ -459,16 +461,19 @@ EOS
 
   post "/repository-subscriptions/:repository_id/contributors/:contributor_id" do
     contributor_preference = ContributorPreferences.find_by(git_id: params[:contributor_id])
-    contributor_preference.followed_repos << params[:repository_id]
-    contributor_preference.save!
+    unless contributor_preference.followed_repos.include?(params[:repository_id])
+      contributor_preference.followed_repos << params[:repository_id]
+      contributor_preference.save!
+    end
     redirect "/repositories/#{params[:repository_id]}"
   end
 
   delete "/repository-subscriptions/:repository_id/contributors/:contributor_id" do
-    binding.pry
     contributor_preference = ContributorPreferences.find_by(git_id: params[:contributor_id])
-    contributor_preference.followed_repos << params[:repository_id]
-    contributor_preference.save!
+    if contributor_preference.followed_repos.include?(params[:repository_id])
+      contributor_preference.followed_repos.delete(params[:repository_id])
+      contributor_preference.save!
+    end
     redirect "/repositories/#{params[:repository_id]}"
   end
 

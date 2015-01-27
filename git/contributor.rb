@@ -5,6 +5,11 @@ class Contributor
     @user_id       = payload[:id]
     @user_name     = payload[:login]
     @contributions = payload[:contributions]
+    create_preferences
+  end
+
+  def create_preferences
+    preference_storage.update_attributes({ name: @user_name })
   end
 
   def preferences

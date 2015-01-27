@@ -23,15 +23,15 @@ html
                 a href="/repositories/#{contributor.user_id}"= contributor.user_id
               td.id 
                   input type="text" name="name" value=contributor.user_name
-              - if contributor.preferences[:followed_repos].include?(repository.id)
-                td.id 
-                  form action="/repository-subscriptions/#{repository.id}/contributors/#{contributor.user_id}" method="post"
-                    input type="submit" value="Subscribe"
-              - else
+              - if contributor.preferences[:followed_repos].include?(repository.id.to_s)
                 td.id 
                   form action="/repository-subscriptions/#{repository.id}/contributors/#{contributor.user_id}" method="post"
                     input type="hidden" name="_method" value="delete"
                     input type="submit" value="Unsubscribe"
+              - else
+                td.id 
+                  form action="/repository-subscriptions/#{repository.id}/contributors/#{contributor.user_id}" method="post"
+                    input type="submit" value="Subscribe"
       - else
         p
          | No items found.  Please add some inventory.

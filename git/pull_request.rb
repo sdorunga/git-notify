@@ -19,7 +19,7 @@ module Git
     end
 
     def mentioned_users
-      body.scan(/@([\w+-]+)/).flatten
+      body.scan(/@([\w+-]+)/).flatten.map { |user_name| Contributor.new(Octokit.user(user_name)) }
     end
   end
 end
