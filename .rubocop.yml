@@ -1,0 +1,41 @@
+---
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+
+Style/TrailingComma:
+  EnforcedStyleForMultiline: comma
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/SpecialGlobalVars:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Style/IndentHash:
+  EnforcedStyle: consistent
+
+Style/HashSyntax:
+  EnforcedStyle: hash_rockets
+
+DoubleNegation:
+  Enabled: false
+
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+Style/Documentation:
+  Enabled: false
+
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+Style/AndOr:
+  Enabled: false
+
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation

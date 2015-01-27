@@ -21,4 +21,3 @@ class Contributor
     @preference_storage ||= ContributorPreferences.find_or_create_by(git_id: user_id)
   end
 end
-
