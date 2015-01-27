@@ -1,3 +1,6 @@
+require 'dotenv'
+Dotenv.load
+
 require 'octokit'
 require 'sinatra'
 require 'mongoid'
@@ -13,8 +16,8 @@ require_relative 'repository_preferences'
 require_relative 'contributor_preferences'
 
 Octokit.configure do |c|
-  c.login = 'sdorunga-sb'
-  c.password = 'Student3230'
+  c.login = ENV.fetch("GIT_USERNAME")
+  c.password = ENV.fetch("GIT_PASSWORD")
 end
 
 Mongoid.load!("mongoid.yml", :development)
