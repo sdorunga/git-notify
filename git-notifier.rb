@@ -15,7 +15,6 @@ require_relative 'git/repository'
 require_relative 'notifiers/slack'
 require_relative 'repository_preferences'
 require_relative 'contributor_preferences'
-use Rack::SSL
 
 Octokit.configure do |c|
   c.login = ENV.fetch("GIT_USERNAME")
