@@ -440,6 +440,8 @@ class MyApp < Sinatra::Application
 EOS
 
   post '/webhooks' do
+    logger.info "##################### REQUEST ###############"
+    logger.info request.body
     payload = Oj.load(request.body.read, symbol_keys: true)
     repository_id = payload[:repository][:id]
     repository = Repository.new(id: repository_id)
