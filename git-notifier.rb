@@ -21,7 +21,7 @@ Octokit.configure do |c|
   c.password = ENV.fetch("GIT_PASSWORD")
 end
 
-Mongoid.load!("mongoid.yml", :development)
+Mongoid.load!("mongoid.yml")
 
 class MyApp < Sinatra::Application
   string = <<-EOS
