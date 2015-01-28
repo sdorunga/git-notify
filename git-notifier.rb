@@ -440,7 +440,7 @@ class MyApp < Sinatra::Application
 EOS
 
   post '/webhooks' do
-    request = Oj.load(string, symbol_keys: true)
+    request = Oj.load(request.body.read, symbol_keys: true)
     repository_id = request[:repository][:id]
     repository = Repository.new(id: repository_id)
     pr = Git::PullRequest.new(request[:pull_request])
