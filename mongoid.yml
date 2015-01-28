@@ -4,4 +4,10 @@ development:
       database: git-notifier
       hosts:
         - localhost:27017
+production:
+  sessions:
+    default:
+      database: git-notifier
+      hosts:
+        - <%= ENV["MONGOLAB_URI"] %>
 
