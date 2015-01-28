@@ -21,7 +21,7 @@ module Notifiers
     end
 
     def webhook_url
-      "https://hooks.slack.com/services/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"
+      ENV.fetch("SLACK_WEBHOOK_URL")
     end
   end
 end
