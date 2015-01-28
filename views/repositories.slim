@@ -19,18 +19,17 @@ html
             th Active
           - for repository in repositories do
             tr
-              form action="/contributor-preferences/#{repository.git_id}" method="post"
+              form action="/repositories/#{repository.git_id}" method="post"
                 td.id 
                   a href="/repositories/#{repository.git_id}"= repository.git_id
-                td.id 
-                    input type="text" name="name" value=repository.name
+                td.id= repository.name
                 td.id 
                   - if repository.active
-                    input type="radio" name="notify" value="yes" checked='checked' Yes
-                    input type="radio" name="notify" value="no" No
+                    input type="radio" name="active" value="yes" checked='checked' Yes
+                    input type="radio" name="active" value="no" No
                   - else 
-                    input type="radio" name="notify" value="yes" Yes
-                    input type="radio" name="notify" value="no" checked='checked' No
+                    input type="radio" name="active" value="yes" Yes
+                    input type="radio" name="active" value="no" checked='checked' No
                 td.id 
                     input type="submit"
       - else

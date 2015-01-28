@@ -3,7 +3,7 @@ class ContributorPreferences
 
   field :git_id, type: String
   field :name, type: String
-  field :notify, type: Boolean
+  field :notify, type: Boolean, default: false
   field :followed_repos, type: Array, default: []
 
   def whitelisted_fields

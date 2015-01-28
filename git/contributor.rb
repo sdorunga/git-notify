@@ -16,6 +16,10 @@ class Contributor
     preferences[:notify]
   end
 
+  def followed_repos
+    preferences[:followed_repos] || []
+  end
+
   def preferences
     {
       name:           preference_storage.name,

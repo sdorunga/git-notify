@@ -1,15 +1,23 @@
 class Repository
-  attr_reader :id
+  attr_reader :id, :preferences
 
   def initialize(id:)
     @id = id
     @repository = Octokit.repositories.detect { |repo| repo.id == @id }
-    @repository_preferences = RepositoryPreferences.find_or_create_by(git_id: id)
-    @repository_preferences.update_attributes(name: @repository[:name])
+    @preferences = RepositoryPreferences.find_or_create_by(git_id: id)
+    @preferences.update_attributes(name: @repository[:name])
+  end
+
+  def name
+    preferences.name
+  end
+
+  def contributors
+    @contributors ||= contributor_data.map { |contributor| Contributor.new(contributor) }
   end
 
   def notifiable_contributors
-    contributor_data.map { |contributor| Contributor.new(contributor) }.select(:notify?)
+    contributors.select(&:notify?)
   end
 
   def top_contributors
@@ -20,10 +28,15 @@ class Repository
                  sample(contributors_to_invoke)
   end
 
+  def subscribers
+    subscriber_ids = ContributorPreferences.all(followed_repos: id.to_s).pluck(:git_id)
+    contributors.select { |contributor| subscriber_ids.include?(contributor.user_id.to_s) }
+  end
+
   private
 
   def notify?
-    @repository_preferences.notify?
+    @preferences.active
   end
 
   def contributor_data

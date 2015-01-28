@@ -444,8 +444,11 @@ EOS
     repository = Repository.new(id: repository_id)
     pr = Git::PullRequest.new(request[:pull_request])
     top_contributors = repository.top_contributors
-    review_team = (top_contributors + pr.mentioned_users).uniq {|contributor| contributor.preferences[:name] }
+    subscribers = repository.subscribers
+    review_team = (top_contributors + pr.mentioned_users + subscribers).uniq {|contributor| contributor.preferences[:name] }
     review_team.each { |contributor| Notifiers::Slack.new(username: contributor.user_name, pr: pr).notify }
+
+    status 200
   end
 
   get '/repositories' do
@@ -457,6 +460,13 @@ EOS
   get '/repositories/:repository_id' do
     repository = Repository.new(id: params[:repository_id].to_i)
     slim :repository, locals: { repository: repository, contributors: repository.contributors }
+  end
+
+  post '/repositories/:repository_id' do
+    preferences = RepositoryPreferences.find_by(git_id: params[:repository_id].to_i)
+    whitelisted_params = preferences.whitelisted_fields.reduce({}) { |hash, field| hash[field.to_s] = params[field] if params[field]; hash }
+    preferences.update_attributes(whitelisted_params)
+    redirect "/repositories"
   end
 
   post "/repository-subscriptions/:repository_id/contributors/:contributor_id" do
@@ -486,6 +496,6 @@ EOS
     contributor_preferences = ContributorPreferences.find_by(git_id: params[:git_id])
     whitelisted_params = contributor_preferences.whitelisted_fields.reduce({}) { |hash, field| hash[field.to_s] = params[field]; hash }
     contributor_preferences.update_attributes!(whitelisted_params)
-    redirect '/hi'
+    redirect '/contributor-preferences'
   end
 end

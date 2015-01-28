@@ -6,10 +6,10 @@ html
     meta name="author" content="Author"
 
   body
-    h1 User Repositories
+    h1="Subscribers for #{repository.name}"
 
     #content
-      p This page lets you select the options for all the repositories
+      p Subscribe to a repo if you'd like to be notified of all activity
 
       - if repository
         table
@@ -19,11 +19,9 @@ html
             th Active
           - for contributor in contributors do
             tr
-              td.id 
-                a href="/repositories/#{contributor.user_id}"= contributor.user_id
-              td.id 
-                  input type="text" name="name" value=contributor.user_name
-              - if contributor.preferences[:followed_repos].include?(repository.id.to_s)
+              td.id= contributor.user_id
+              td.id= contributor.user_name
+              - if contributor.followed_repos.include?(repository.id.to_s)
                 td.id 
                   form action="/repository-subscriptions/#{repository.id}/contributors/#{contributor.user_id}" method="post"
                     input type="hidden" name="_method" value="delete"
