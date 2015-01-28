@@ -12,4 +12,3 @@ gem "slack-notifier"
 gem "dotenv"
 gem "rubocop"
 gem "newrelic_rpm"
-gem 'tilt', '>= 1.3.4', '~> 1.3'
