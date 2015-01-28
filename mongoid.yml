@@ -7,6 +7,5 @@ development:
 production:
   sessions:
     default:
-      uri:
-        - mongodb://heroku_app33557146:3c0p3p16oi4qpefv69uptgmppl@ds053448.mongolab.com:53448/heroku_app33557146
+      uri: mongodb://heroku_app33557146:3c0p3p16oi4qpefv69uptgmppl@ds053448.mongolab.com:53448/heroku_app33557146
 
