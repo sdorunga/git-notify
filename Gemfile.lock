@@ -44,6 +44,7 @@ GEM
       connection_pool (~> 2.0)
       optionable (~> 0.2.0)
     multipart-post (2.0.0)
+    newrelic_rpm (3.9.9.275)
     octokit (3.7.0)
       sawyer (~> 0.6.0, >= 0.5.3)
     oj (2.11.4)
@@ -87,6 +88,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   mongoid
+  newrelic_rpm
   octokit
   oj
   pry
