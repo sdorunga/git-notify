@@ -441,8 +441,8 @@ EOS
 
   post '/webhooks' do
     logger.info "########################### REQUEST #################"
-    logger.info request.to_s
-    loger.info "########################### PARAMS #################"
+    logger.info request.body.read
+    logger.info "########################### PARAMS #################"
     logger.info params.to_s
     request = Oj.load(request.body.read, symbol_keys: true)
     repository_id = request[:repository][:id]
