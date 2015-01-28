@@ -440,7 +440,7 @@ class MyApp < Sinatra::Application
 EOS
 
   post '/webhooks' do
-    loger.info "########################### REQUEST #################"
+    logger.info "########################### REQUEST #################"
     logger.info request.to_s
     loger.info "########################### PARAMS #################"
     logger.info params.to_s
