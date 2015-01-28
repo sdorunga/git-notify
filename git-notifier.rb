@@ -440,14 +440,10 @@ class MyApp < Sinatra::Application
 EOS
 
   post '/webhooks' do
-    logger.info "########################### REQUEST #################"
-    logger.info request.body.read
-    logger.info "########################### PARAMS #################"
-    logger.info params.to_s
-    request = Oj.load(request.body.read, symbol_keys: true)
-    repository_id = request[:repository][:id]
+    payload = Oj.load(request.body.read, symbol_keys: true)
+    repository_id = payload[:repository][:id]
     repository = Repository.new(id: repository_id)
-    pr = Git::PullRequest.new(request[:pull_request])
+    pr = Git::PullRequest.new(payload[:pull_request])
     top_contributors = repository.top_contributors
     subscribers = repository.subscribers
     review_team = (top_contributors + pr.mentioned_users + subscribers).uniq {|contributor| contributor.preferences[:name] }
