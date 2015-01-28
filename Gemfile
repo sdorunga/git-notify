@@ -2,7 +2,7 @@
 source "https://rubygems.org"
 
 gem "octokit"
-gem "sinatra", git: 'git@github.com:sinatra/sinatra.git'
+gem "sinatra"
 gem "pry"
 gem "oj"
 gem "mongoid"
