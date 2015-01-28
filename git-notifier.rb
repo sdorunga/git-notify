@@ -1,7 +1,7 @@
 require 'dotenv'
 Dotenv.load
 
-require 'newrelic_rpm'
+#require 'newrelic_rpm'
 require 'octokit'
 require 'sinatra'
 require 'mongoid'
