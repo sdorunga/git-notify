@@ -8,6 +8,6 @@ production:
   sessions:
     default:
       database: git-notifier
-      hosts:
+      uri:
         - <%= ENV["MONGOLAB_URI"] %>
 
