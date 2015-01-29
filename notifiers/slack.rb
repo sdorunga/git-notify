@@ -8,7 +8,7 @@ module Notifiers
       @pr = pr
       @slack = ::Slack::Notifier.new(webhook_url)
       @slack.username = "git-notifier"
-      @slack.channel = "@sdorunga"
+      @slack.channel = "@#{username}"
     end
 
 
