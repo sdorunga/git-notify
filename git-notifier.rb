@@ -21,7 +21,7 @@ Octokit.configure do |c|
   c.password = ENV.fetch("GIT_PASSWORD")
 end
 
-Mongoid.load!("mongoid.yml", :production)
+Mongoid.load!("mongoid.yml")
 
 class MyApp < Sinatra::Application
   string = <<-EOS
@@ -440,8 +440,7 @@ class MyApp < Sinatra::Application
 EOS
 
   post '/webhooks' do
-    logger.info "##################### REQUEST ###############"
-    logger.info request.body
+    request.body.rewind
     payload = Oj.load(request.body.read, symbol_keys: true)
     repository_id = payload[:repository][:id]
     repository = Repository.new(id: repository_id)
