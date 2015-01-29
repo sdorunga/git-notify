@@ -1,6 +1,6 @@
 # Nicaea
 
-[logo](http://upload.wikimedia.org/wikipedia/commons/0/0d/COUNCIL_OF_NICEA_Fresco_in_the_Sistine_Salon_Vatican_t.jpg)
+![logo](http://upload.wikimedia.org/wikipedia/commons/0/0d/COUNCIL_OF_NICEA_Fresco_in_the_Sistine_Salon_Vatican_t.jpg)
 
 Small web-service to notify top contributors and users mentioned in the PR body.
 
