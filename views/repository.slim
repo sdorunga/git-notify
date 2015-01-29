@@ -16,11 +16,12 @@ html
           tr
             th Github User ID
             th User name
-            th Active
+            th Slack User name
           - for contributor in contributors do
             tr
               td.id= contributor.user_id
               td.id= contributor.user_name
+              td.id= contributor.slack_username
               - if contributor.followed_repos.include?(repository.id.to_s)
                 td.id 
                   form action="/repository-subscriptions/#{repository.id}/contributors/#{contributor.user_id}" method="post"

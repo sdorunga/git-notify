@@ -15,6 +15,7 @@ html
         table
           tr
             th Github User ID
+            th Github Name
             th Slack Name
             th Notify
           - for preference in preferences do
@@ -23,7 +24,9 @@ html
                 td.id 
                   = preference.git_id
                 td.id 
-                    input type="text" name="name" value=preference.name
+                    = preference.name
+                td.id 
+                    input type="text" name="slack_username" value=preference.slack_username
                 td.id 
                   - if preference.notify
                     input type="radio" name="notify" value="yes" checked='checked' Yes

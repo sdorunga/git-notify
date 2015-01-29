@@ -3,6 +3,7 @@ class ContributorPreferences
 
   field :git_id, type: String
   field :name, type: String
+  field :slack_username, type: String
   field :notify, type: Boolean, default: false
   field :followed_repos, type: Array, default: []
 

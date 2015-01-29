@@ -3,8 +3,8 @@ module Notifiers
 
     attr_reader :pr, :username
 
-    def initialize(username:, pr:)
-      @username = username
+    def initialize(slack_username:, pr:)
+      @username = slack_username
       @pr = pr
       @slack = ::Slack::Notifier.new(webhook_url)
       @slack.username = "git-notifier"

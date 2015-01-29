@@ -9,7 +9,11 @@ class Contributor
   end
 
   def create_preferences
-    preference_storage.update_attributes({ name: @user_name })
+    if preference_storage.slack_username
+      preference_storage.update_attributes({ name: @user_name })
+    else
+      preference_storage.update_attributes({ name: @user_name, slack_username: @user_name })
+    end
   end
 
   def notify?
@@ -20,10 +24,15 @@ class Contributor
     preferences[:followed_repos] || []
   end
 
+  def slack_username
+    preferences[:slack_username] || []
+  end
+
   def preferences
     {
       name:           preference_storage.name,
       notify:         preference_storage.notify,
+      slack_username: preference_storage.slack_username,
       followed_repos: preference_storage.followed_repos
     }
   end

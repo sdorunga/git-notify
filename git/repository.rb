@@ -29,7 +29,7 @@ class Repository
   end
 
   def subscribers
-    subscriber_ids = ContributorPreferences.all(followed_repos: id.to_s).pluck(:git_id)
+    subscriber_ids = ContributorPreferences.all(followed_repos: id.to_s, notify: true).pluck(:git_id)
     contributors.select { |contributor| subscriber_ids.include?(contributor.user_id.to_s) }
   end
 
