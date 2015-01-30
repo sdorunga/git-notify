@@ -20,6 +20,8 @@ module Notifiers
       "Hi #{username}!\nYou were tagged in PR ##{pr.number} by @#{pr.user.user_name} at #{pr.url}"
     end
 
+    private
+
     def webhook_url
       ENV.fetch("SLACK_WEBHOOK_URL")
     end
