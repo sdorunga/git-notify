@@ -4,7 +4,7 @@ class RepositoryPreferences
   field :git_id, type: String
   field :name, type: String
   field :active, type: Boolean, default: false
-  field :subscribers, type: Array
+  field :subscribers, type: Array, default: []
 
   def whitelisted_fields
     fields.keys.reject { |key| key == "_id" }

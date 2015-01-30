@@ -14,3 +14,4 @@ gem "rubocop"
 gem "newrelic_rpm"
 gem "rspec"
 gem "rack-test"
+gem 'guard-rspec', require: false
