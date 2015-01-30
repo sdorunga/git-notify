@@ -1,11 +1,14 @@
 module Notifiers
   class Slack
 
-    attr_reader :pr, :username
+    attr_reader :pr, :username, :pr_number, :pr_url, :owner_username
 
-    def initialize(slack_username:, pr:)
-      @username = slack_username
-      @pr = pr
+    def initialize(slack_username:, pr_number:, pr_url:, owner_username:)
+      @username       = slack_username
+      @pr_number      = pr_number
+      @pr_url         = pr_url
+      @owner_username = owner_username
+      @pr             = pr
       @slack = ::Slack::Notifier.new(webhook_url)
       @slack.username = "git-notifier"
       @slack.channel = "@#{username}"
@@ -17,7 +20,7 @@ module Notifiers
     end
 
     def message
-      "Hi #{username}!\nYou were tagged in PR ##{pr.number} by @#{pr.user.user_name} at #{pr.url}"
+      "Hi #{username}!\nYou were tagged in PR ##{pr_number} by @#{owner_username} at #{pr_url}"
     end
 
     private

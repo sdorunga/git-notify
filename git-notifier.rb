@@ -34,7 +34,7 @@ class MyApp < Sinatra::Application
     subscribers = repository.subscribers
     binding.pry
     review_team = (top_contributors + pr.mentioned_users + subscribers).uniq {|contributor| contributor.user_name }
-    review_team.each { |contributor| Notifiers::Slack.new(slack_username: contributor.user_name, pr: pr).notify }
+    review_team.each { |contributor| Notifiers::Slack.new(slack_username: contributor.user_name, pr_number: pr.number, pr_url: pr.url, owner_username: pr.user.user_name).notify }
 
     status 200
   end
