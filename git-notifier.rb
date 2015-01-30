@@ -28,12 +28,12 @@ class MyApp < Sinatra::Application
     request.body.rewind
     payload = Oj.load(request.body.read, symbol_keys: true)
     repository_id = payload[:repository][:id]
-    repository = Repository.new(id: repository_id)
+    repository = Git::Repository.new(id: repository_id)
     pr = Git::PullRequest.new(payload[:pull_request])
     top_contributors = repository.top_contributors
     subscribers = repository.subscribers
     binding.pry
-    review_team = (top_contributors + pr.mentioned_users + subscribers).uniq {|contributor| contributor.preferences[:name] }
+    review_team = (top_contributors + pr.mentioned_users + subscribers).uniq {|contributor| contributor.user_name }
     review_team.each { |contributor| Notifiers::Slack.new(slack_username: contributor.user_name, pr: pr).notify }
 
     status 200
@@ -46,7 +46,7 @@ class MyApp < Sinatra::Application
   end
 
   get '/repositories/:repository_id' do
-    repository = Repository.new(id: params[:repository_id].to_i)
+    repository = Git::Repository.new(id: params[:repository_id].to_i)
     slim :repository, locals: { repository: repository, contributors: repository.contributors }
   end
 

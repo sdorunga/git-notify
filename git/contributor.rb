@@ -17,24 +17,15 @@ class Contributor
   end
 
   def notify?
-    preferences[:notify]
+    preference_storage[:notify]
   end
 
   def followed_repos
-    preferences[:followed_repos] || []
+    preference_storage[:followed_repos] || []
   end
 
   def slack_username
-    preferences[:slack_username] || []
-  end
-
-  def preferences
-    {
-      name:           preference_storage.name,
-      notify:         preference_storage.notify,
-      slack_username: preference_storage.slack_username,
-      followed_repos: preference_storage.followed_repos
-    }
+    preference_storage[:slack_username] || []
   end
 
   private
