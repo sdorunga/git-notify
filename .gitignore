@@ -36,3 +36,6 @@ build/
 
 # Ignore local .env file to not expose sensitive data
 .env
+
+# ignore rbenv's ruby version
+.ruby-version
